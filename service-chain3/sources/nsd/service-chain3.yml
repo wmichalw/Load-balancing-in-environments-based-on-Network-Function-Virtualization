@@ -1,0 +1,97 @@
+
+---
+descriptor_version: "1.0"
+
+vendor: "vendor"
+name: "service-chain3"
+version: "0.1"
+author: "wmichawl"
+description: "Service chain : firewall - snort : 3"
+
+##
+## The various network functions this service
+## is composed of.
+##
+network_functions:
+  - vnf_id: "fw3"
+    vnf_vendor: "eu.sonata-nfv"
+    vnf_name: "fw3-vnf"
+    vnf_version: "0.1"
+  - vnf_id: "snort3"
+    vnf_vendor: "eu.sonata-nfv"
+    vnf_name: "snort3-vnf"
+    vnf_version: "0.1"
+
+
+##
+## The NS connection points to the
+## outside world.
+##
+connection_points:
+  - id: "mgmt"
+    interface: "ipv4"
+    type: "management"
+  - id: "servicein3"
+    interface: "ipv4"
+    type: "external"
+  - id: "serviceout3"
+    interface: "ipv4"
+    type: "external"
+
+##
+## The virtual links that interconnect
+## the different connections points.
+##
+virtual_links:
+  - id: "mgmt"
+    connectivity_type: "E-LAN"
+    connection_points_reference:
+      - "fw3:mgmt"
+      - "snort3:mgmt"
+      - "mgmt"
+  - id: "link-input"
+    connectivity_type: "E-Line"
+    connection_points_reference:
+      - "servicein3"
+      - "fw3:fwin"
+  - id: "link-fw-snort"
+    connectivity_type: "E-Line"
+    connection_points_reference:
+      - "fw3:fwout"
+      - "snort3:input"
+  - id: "link-output"
+    connectivity_type: "E-Line"
+    connection_points_reference:
+      - "snort3:output"
+      - "serviceout3"
+##
+## The forwarding graphs.
+##
+forwarding_graphs:
+  - fg_id: "fg_id:fg01"
+    number_of_endpoints: 2
+    number_of_virtual_links: 4
+    constituent_virtual_links:
+      - "mgmt"
+      - "link-input"
+      - "link-fw-snort"
+      - "link-output"
+    constituent_vnfs:
+      - "fw3"
+      - "snort3"
+    network_forwarding_paths:
+      - fp_id: "fp_id:fg01:fp01"
+        policy: "none"
+        connection_points:
+          - connection_point_ref: "servicein3"
+            position: 1
+          - connection_point_ref: "fw3:fwin"
+            position: 2
+          - connection_point_ref: "fw3:fwout"
+            position: 3
+          - connection_point_ref: "snort3:input"
+            position: 4
+          - connection_point_ref: "snort3:output"
+            position: 5
+          - connection_point_ref: "serviceout3"
+            position: 6

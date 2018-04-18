@@ -1,0 +1,8 @@
+package:
+  description: "my serivce chain"
+  maintainer: "michelo"
+  name: my-service-chain3
+  vendor: michaelwojtaszko.earth
+  version: '0.4'
+descriptor_extension: "yml"
+version: '0.5'
